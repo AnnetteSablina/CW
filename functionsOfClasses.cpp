@@ -2,6 +2,12 @@
 logpass::logpass(std::string login, std::string password) {
 	this->login = login;
 	this->password = password;
+} // конструктор логин +пароль
+Client::Client(std::string login) {
+	this->human.login = login;
+}
+Client::Client() {
+
 }
 bool logpass::operator==(logpass human) {
 	if (this->login == human.login && this->password == human.password)
@@ -279,4 +285,16 @@ std::string Client::hf(std::string massage) {
 		}
 	}
 	return hf;
+}
+std::string yes_no(std::string massage) {
+	std::string trololo;
+	while (true) {
+		system("cls");
+		std::cout << massage << std::endl;
+		getline(std::cin, trololo);
+		if (trololo != "yes" && trololo != "no")
+			continue;
+		else break;
+	}
+	return trololo;
 }

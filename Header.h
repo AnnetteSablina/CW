@@ -13,8 +13,8 @@ class client;
 class data;
 class dogovor;
 int user_login(std::vector <logpass>&);
-void User_haveAccount();//вопрос о имении аккаунта
-void Admin_haveAccount();//вопрос о персонализации личности
+void User_haveAccount(std::vector<logpass>&);//вопрос о имении аккаунта
+void Admin_haveAccount(std::vector<logpass>&);//вопрос о персонализации личности
 int getInt(std::string);// получение целого
 void menu();//меню 1-го уровня
 void data_user_file(std::vector<logpass>& );//получение данных логина/пароля пользователя
@@ -24,6 +24,15 @@ std::string getString(std::string);//получение строки с сообщением
 void data_client_file(std::vector<information>&);//получение инфы о клиенте из файла
 void rewrite_user_file(std::vector<logpass>&);
 void data_passport_file(std::vector<information>&);//получение идентификационного номера из файла
+std::string yes_no(std::string);//получение ответа да/нет
+std::string login(int, bool&, bool&);
+std::string password(bool&);
+
+
+
+
+
+
 
 
 
@@ -75,9 +84,9 @@ public:
 	information user;
 	data data;
 	dogovor dogovor;
+	Client();
+	Client(std::string);
 	virtual void enterAccount(std::vector<logpass>&);
-	void login(int, bool&, bool&);
-	void password(bool&);
 	std::string client_code(std::string);//проверка на ввод кода клиента
 	std::string telephone_number(std::string);//проверка на телефонный номер
 	std::string ccs(std::string);// проверка на ввод страны, города и улицы
@@ -85,15 +94,16 @@ public:
 	void userMenu(std::vector<logpass>&);// меню пользователя
     void changePassword(std::vector<logpass>&);//сменить пароль
 	int checkPasswords();//проверка на пароли
+	bool check_login_once();//проверка на единственность логина
 
 
 };
 class Admin :public Client
 {public:
-    void enterAccount(std::vector<logpass>& ) ;//вход в аккаунт
+    void enterAccount(std::vector<logpass>& ) override ;//вход в аккаунт
 	void CreateAccount(std::vector<logpass>&);//создание аккаунта
 	void deleteAccount(std::vector<logpass>&);//удаление аккаунта
-	void addlogpass(std::vector<logpass>&);//добавить пользователя(логин и пароль)
+	void addlogpass();//добавить пользователя(логин и пароль)
 	void adminMenu(std::vector <logpass>&);//меню админа
 	void add_user_information(std::vector <logpass>&);//добавить информацию о пользователе
 	

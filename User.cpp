@@ -2,12 +2,10 @@
 int user_login(std::vector <logpass>& users) {
 	return 0;
 }
-void User_haveAccount() {
+void User_haveAccount(std::vector<logpass>&users) {
 	int a;
 	bool run = true;
 	Client user;
-	std::vector <logpass> users;
-	data_user_file(users);
 	while (true) {
 		while (run) {
 			a = getInt("У вас есть аккаунт? \n Нажмите: \n 1.Да.\n 2.Нет.");
@@ -69,15 +67,15 @@ void Client::enterAccount(std::vector<logpass>& users) {
 	bool exit = false;
 	do {
 		if (access) {
-			login(1, access, exit);
+			this->human.login=login(1, access, exit);
 		}
 		else {
-			login(2, access, exit);
+			this->human.login=login(2, access, exit);
 		};
 		if (exit) {
 			break;
 		};
-		password(exit);
+		this->human.password=password(exit);
 		if (exit) {
 			break;
 		};
@@ -97,93 +95,130 @@ void Client::enterAccount(std::vector<logpass>& users) {
 
 
 };
-void Client::login(int type, bool& access, bool& exit) {
+bool Client::check_login_once() {
+	bool check=true;
+    bool access = true;
+	bool exit = false;
+	do {
+		if (access) {
+			this->human.login = login(1, access, exit);
+		}
+		if (exit) break;
+		access = true;
+		std::vector<logpass> users;
+		data_user_file(users);
+		for (auto i : users)
+		{
+			if (i.login == this->human.login)
+			{
+				this->human.password = i.password;
+				std::cout << "Пользователь с таким логином действительно есть." << std::endl;
+				std::ofstream file("vse.txt", std::ios::app);
+				file << this->human.login << std::endl << this->human.password << std::endl;
+				file.close();
+				check = true;
+				access = true;
+				break;
+			}
+			else {
+				check = false;
+			}
+		}
+	} while (!access);
+	return check;
+}
+
+std::string login(int type, bool& access, bool& exit) {
 	bool run = true;
 	int u=0;
+	std::string login;
 	switch (type) {
 	case 1:
 		system("cls");
 		if (access) {
-			this->human.login = getString("Введите логин. Для выхода введите menu.");
+			login = getString("Введите логин. Для выхода введите menu.");
 		}
 		else {
-			this->human.login = getString("Введите логин еще раз. Для выхода введите menu.");
+			login = getString("Введите логин еще раз. Для выхода введите menu.");
 		};
 		break;
 	case 2:
 		system("cls");
-		this->human.login = getString("Вы ввели неверные логин или пароль. Введите логин еще раз. Для выхода введите menu.");
+		login = getString("Вы ввели неверные логин или пароль. Введите логин еще раз. Для выхода введите menu.");
 		break;
 	case 3:
 		system("cls");
-		this->human.login = getString("Такой логин уже существует. Для выхода введите menu.");
+		login = getString("Такой логин уже существует. Для выхода введите menu.");
 		break;
 	};
 	
 	do
 	{
 		u = 0;
-		if (this->human.login == "menu")
+		if (login == "menu")
 		{
 			exit = true;
 			break;
 		}
 
-		if (this->human.login.size() < 5)
+		if (login.size() < 5)
 		{
 			
-			this->human.login = getString("Введите логин из 5 или более символов. Для выхода введите menu.");
+			login = getString("Введите логин из 5 или более символов. Для выхода введите menu.");
 			continue;
 		}
 
-		for (unsigned int i = 0; i < this->human.login.size(); ++i)
-			if (!((this->human.login[i] >= 'a' && this->human.login[i] <= 'z')
-				|| (this->human.login[i] >= 'A' && this->human.login[i] <= 'Z')
-				|| (this->human.login[i] >= '0' && this->human.login[i] <= '0')))
+		for (unsigned int i = 0; i < login.size(); ++i)
+			if (!((login[i] >= 'a' && login[i] <= 'z')
+				|| (login[i] >= 'A' && login[i] <= 'Z')
+				|| (login[i] >= '0' && login[i] <= '0')))
 			{
-				this->human.login = getString("Логин содержит недопустимые символы. Для выхода введите menu.");
+				login = getString("Логин содержит недопустимые символы. Для выхода введите menu.");
 				break;
 			}
 			else {
 				u++;
 			}
-		if (u == human.login.size()) {
+		if (u == login.size()) {
 			break;
 		}
 
 	} while (true);
+	return login;
 };
 
-void Client::password(bool& exit) {
+std::string password(bool& exit) {
 	int u = 0;
-	this->human.password = getString("Введите пароль. Для выхода введите menu.");
+	std::string password;
+	password = getString("Введите пароль. Для выхода введите menu.");
 	do {
 		u = 0;
-		if (this->human.password == "menu")
+		if (password == "menu")
 		{
 			exit = true;
 			break;
 		}
-		if (this->human.password.size() <= 8 && this->human.password.size() >= 12)
+		if (password.size() <= 8 && password.size() >= 12)
 		{
-			this->human.password = getString("Пароль должен содержать  от 8 до 12 символов. Для выхода введите menu.");
+			password = getString("Пароль должен содержать  от 8 до 12 символов. Для выхода введите menu.");
 		}
 
-		for (auto a : this->human.password) {
+		for (auto a : password) {
 			if (!((a >= 'a' && a <= 'z') || (a >= 'A' && a <= 'Z') || (a >= '0' && a <= '9')))
 			{
-				this->human.password = getString("Пароль содержит недопустимые символы. Для выхода введите menu.");
+				password = getString("Пароль содержит недопустимые символы. Для выхода введите menu.");
 				break;
 			}
 			else {
 				u++;
 			}
 		}
-		if (u == this->human.password.size()) {
+		if (u == password.size()) {
 			break;
 		}
 
 	} while (true);
+	return password;
 };
 
 void Client::userMenu(std::vector<logpass>& users) {
