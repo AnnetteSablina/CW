@@ -1,6 +1,9 @@
 #include"Header.h"
 void menu()
-{
+{  std::vector<logpass>admins;
+	data_admin_file(admins);
+	std::vector <logpass> users;
+	data_user_file(users);
 	system("cls");
 	int a;
 	bool run = true;
@@ -10,11 +13,11 @@ void menu()
 		switch (a) {
 		case 1:
 			system("cls");
-			Admin_haveAccount();
+			Admin_haveAccount(admins);
 			break;
 		case 2:
 			system("cls");
-			User_haveAccount();
+			User_haveAccount(users);
 			break;
 		default:
 			std::cout << "Попробуйте ввести еще раз. Неверный ввод." << std::endl;
@@ -26,12 +29,10 @@ void menu()
 
 	}
 }	
-void Admin_haveAccount() {
+void Admin_haveAccount(std::vector<logpass>&admins) {
 	int a;
 	bool run = true;
 	Admin admin;
-	std::vector<logpass>admins;
-	data_admin_file(admins);
 	while (true) {
 		while (run) {
 			a = getInt("Вы точно админестратор? \n Нажмите: \n 1.Да.\n 2.Нет.");
@@ -82,15 +83,15 @@ void Admin::enterAccount(std::vector<logpass>&admins) {
 	bool exit = false;
 	do {
 		if (access) {
-			login(1, access, exit);
+			this->human.login=login(1, access, exit);
 		}
 		else {
-			login(2, access, exit);
+			this->human.login=login(2, access, exit);
 		};
 		if (exit) {
 			break;
 		};
-		password(exit);
+		this->human.password=password(exit);
 		if (exit) {
 			break;
 		};
@@ -111,19 +112,31 @@ void Admin::enterAccount(std::vector<logpass>&admins) {
 void Admin::adminMenu(std::vector <logpass>& admins) {
 	system("cls");
 	int a,b,c,d,e;
+	bool check;
 	bool run = true;
 	bool run1 = true;
 	bool run2 = true;
 	bool run3 = true;
 	while (run) {
 		a = getInt(" МЕНЮ АДМИНЕСТРАТОРА  \n  Нажмите: \n 1.Заключить новый договор. \n 2.Редактирование информации о пользователе. \n 3.Удаление пользователя.  \n 4.Просмотр всех данных в табличной форме. \n 5.Поиск и сортировка данных. \n 6.Добавление логина и пароля нового пользователя. \n 7.Выход в главное меню.");
+		run = false;
 		switch (a) {
 		case 1:
 			system("cls");
-			std::cout << "Добавим сведения о клиенте:" << std::endl;
-			add_user_information(admins);
+			std::string choise = yes_no("Клиент имеет логин и пароль? Введите yes или no.");
+			if (choise == "yes") {
+				check=check_login_once();
+				if (!check) {
+					addlogpass();
+				}
+			}
+			else {
+				addlogpass();
+			}
 
-			
+			//add_user_information(admins);
+
+			break;
 			
 
 		}
@@ -173,4 +186,7 @@ void Admin::add_user_information(std::vector <logpass>& admins) {
 		adminMenu(admins);
 	}
 	
+}
+void Admin::addlogpass() {
+	std::cout << "Добавить пользователя" << std::endl;
 }
