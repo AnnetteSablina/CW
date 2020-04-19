@@ -27,14 +27,15 @@ std::string getString(std::string p)
 }
 int getInt(std::string massage) {
 	int c;
-	std::cout << massage << std::endl;;
+	std::cout << massage << std::endl;
 	while (true) {
 		std::cin >> c;
 		if (std::cin.fail()) {
 			std::cin.clear();
 			std::cin.ignore(32767, '\n');
 			system("cls");
-			std::cout << "Используй целое число:" << std::endl;
+			std::cout << "Используй целое число." << std::endl;
+			std::cout << massage << std::endl;
 			continue;
 
 		}
@@ -43,8 +44,8 @@ int getInt(std::string massage) {
 	};
 	return c;
 }
-information::information(std::string client_code, std::string telephone_number, std::string country, std::string city, std::string street, std::string housenumber, std::string flatnumber) {
-	this->client_code = client_code;
+information::information( std::string telephone_number, std::string country, std::string city, std::string street, std::string housenumber, std::string flatnumber) {
+
 	this->telephone_number = telephone_number;
 	this->country = country;
 	this->city = city;
@@ -54,8 +55,10 @@ information::information(std::string client_code, std::string telephone_number, 
 }
 information::information(){
 }
-information::information(std::string client_code) {
+information::information(std::string client_code,std::string name, std::string surname) {
 	this->client_code = client_code;
+	this->name = name;
+	this->surname = surname;
 }
 bool information::operator==(information user) {
 	if (this->client_code == user.client_code)
@@ -78,7 +81,7 @@ data::data(std::string data) {
 data::data() {
 
 }
-std::string Client::client_code(std::string massage) {
+std::string client_code(std::string massage) {
 	std::string client_code;
 	for (int k = 0;;) {
 		std::cout << massage << std::endl;
@@ -86,8 +89,6 @@ std::string Client::client_code(std::string massage) {
 		int s = 0;
 		std::getline(std::cin, client_code);
 		system("cls");
-		if (client_code == "exit")
-		break;
 		for (unsigned int i = 0; i < client_code.size(); i++) {
 			if (client_code.size() != 8) {
 				s++;
@@ -129,7 +130,7 @@ std::string Client::client_code(std::string massage) {
 	}
 	return client_code;
 }
-std::string Client::ccs(std::string massage)
+std::string ccs(std::string massage)
 {std::string ccs;
 	for (int k = 0;;) {
 		std::cout << massage << std::endl;
@@ -137,8 +138,6 @@ std::string Client::ccs(std::string massage)
 		int s = 0;
 		std::getline(std::cin, ccs);
 		system("cls");
-		if (ccs == "exit")
-			break;
 		for (unsigned int i = 0; i < ccs.size(); i++) {
 
 			if (ccs[i] == ' ') {
@@ -188,7 +187,7 @@ std::string Client::ccs(std::string massage)
 	}
 	return ccs;
 }
-std::string Client::telephone_number(std::string massage) {
+std::string telephone_number(std::string massage) {
 	std::string telephone_number;
 	for (int k = 0;;) {
 		std::cout << massage << std::endl;
@@ -196,8 +195,6 @@ std::string Client::telephone_number(std::string massage) {
 		int s = 0;
 		std::getline(std::cin, telephone_number);
 		system("cls");
-		if (telephone_number == "exit")
-			break;
 		for (unsigned int i = 0; i < telephone_number.size(); i++) {
 			if (telephone_number.size() != 9) {
 				s++;
@@ -237,7 +234,7 @@ std::string Client::telephone_number(std::string massage) {
 	}
 	return telephone_number;
 }
-std::string Client::hf(std::string massage) {
+std::string hf(std::string massage) {
 	std::string hf;
 	for (int k = 0;;) {
 		std::cout << massage << std::endl;
@@ -245,8 +242,6 @@ std::string Client::hf(std::string massage) {
 		int s = 0;
 		std::getline(std::cin, hf);
 		system("cls");
-		if (hf == "exit")
-			break;
 		for (unsigned int i = 0; i < hf.size(); i++) {
 			if (hf.size() > 3) {
 				s++;
@@ -286,6 +281,64 @@ std::string Client::hf(std::string massage) {
 	}
 	return hf;
 }
+std::string ns(std::string massage) {
+	std::string ns;
+	for (int k = 0;;) {
+		std::cout << massage << std::endl;
+		int u = 0;
+		int s = 0;
+		std::getline(std::cin,ns);
+		system("cls");
+		for (int i = 0; i < ns.size(); i++) {
+
+			if (ns[i] == ' ') {
+				s++;
+				std::cout << "Не используйте пробелы." << std::endl;
+				break;
+			}
+
+		}
+		if (s == 0) {
+			for (int i = 0; i < ns.size(); i++) {
+				if (ns.size() < 3) {
+					std::cout << " Введите еще раз. Недостаточно символов. Минимум 3 символа." << std::endl;
+					break;
+				}
+				if (ns[0] >= 'A' && ns[0] <= 'Z')
+					i = 1;
+				else
+				{
+					std::cout << "Используйте буквы латинского алфавита. Первый символ должен быть заглавной буквой.Введите имя еще раз\n" << std::endl;
+					break;
+				}
+
+				for (i; i < ns.size(); i++) {
+					if (ns[i] >= 'a' && ns[i] <= 'z')
+						u++;
+
+					else {
+						std::cout << " Используйте буквы латинского алфавита .\n Остальные символы - строчные буквы.Введите имя еще раз." << std::endl;
+						u = 0;
+						break;
+					}
+
+				}
+
+				if (u == 0)
+					break;
+				if (u == ns.size() - 1) {
+					std::cout << "Имя одобрено." << std::endl;
+					break;
+				}
+
+			}
+		}
+
+		if (u == ns.size() - 1)
+			break;
+	}
+	return ns;
+}
 std::string yes_no(std::string massage) {
 	std::string trololo;
 	while (true) {
@@ -298,3 +351,49 @@ std::string yes_no(std::string massage) {
 	}
 	return trololo;
 }
+void user_file(std::vector<std::string> &users, std::vector<std::string> &password) {
+	{
+		std::string temp;
+		std::string tr;
+		std::ifstream file("users.txt");
+		while (!file.eof())
+		{
+		    getline(file, temp);
+			std::cout << temp.size() << std::endl;
+			users.push_back(temp);
+			getline(file, tr);
+			std::cout << temp.size() << std::endl;
+			password.push_back(tr);
+		}
+		file.close();
+		if (!password.empty()) password.erase(password.end() - 1);
+
+	}
+	for (int i=0; i < users.size(); i++) {
+		std::cout << users[i] << std::endl;
+	}
+	for (int i = 0; i < password.size(); i++) {
+		std::cout << password[i] << std::endl;
+	}
+}
+void trololo() {
+	int count = 0;
+	std::string str;
+	std::vector <std::string> users;
+	std::vector<std::string> password;
+	user_file(users,password);
+	int maxcount(0), nn(0);
+	for (int i = 0; i < users.size(); i++) {
+		 count=0;
+		for (int j = i; j < users.size(); j++) {
+			if (users[i] == users[j])
+				count++; 
+		
+		}
+		if (maxcount < count) {
+			maxcount = count;
+			nn = i;
+		}
+	}
+	std::cout << users[nn] << " " << password[nn]<<" " << maxcount;
+};

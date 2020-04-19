@@ -105,20 +105,20 @@ void Admin::enterAccount(std::vector<logpass>&admins) {
 		menu();
 	};
 	if (access) {
-		adminMenu(admins);
+		adminMenu();
 	}
 
 };
-void Admin::adminMenu(std::vector <logpass>& admins) {
+void Admin::adminMenu() {
 	system("cls");
 	int a,b,c,d,e;
-	bool check;
+	bool check=true;
 	bool run = true;
 	bool run1 = true;
 	bool run2 = true;
 	bool run3 = true;
 	while (run) {
-		a = getInt(" МЕНЮ АДМИНЕСТРАТОРА  \n  Нажмите: \n 1.Заключить новый договор. \n 2.Редактирование информации о пользователе. \n 3.Удаление пользователя.  \n 4.Просмотр всех данных в табличной форме. \n 5.Поиск и сортировка данных. \n 6.Добавление логина и пароля нового пользователя. \n 7.Выход в главное меню.");
+		a = getInt(" МЕНЮ АДМИНЕСТРАТОРА  \n  Нажмите: \n 1.Заключить новый договор. \n 2.Редактирование информации о пользователе. \n 3.Просмотр заключенных договоров. \n 4.Поиск и сортировка данных. \n 5.Добавление логина и пароля нового пользователя или информации о нем. \n 6.Выход в главное меню.");
 		run = false;
 		switch (a) {
 		case 1:
@@ -127,14 +127,54 @@ void Admin::adminMenu(std::vector <logpass>& admins) {
 			if (choise == "yes") {
 				check=check_login_once();
 				if (!check) {
+					system("cls");
+					std::cout << "Пользователя с таким логином не существует." << std::endl;
+					std::cout << "Добавьте информацию о пользователе." << std::endl;
+					Sleep(2000);
 					addlogpass();
 				}
 			}
 			else {
+				system("cls");
+				std::cout << "Добавьте информацию о пользователе." << std::endl;
+				Sleep(2000);
 				addlogpass();
 			}
+			Sleep(2500);
+			std::string choise1 = yes_no("Клиент имеет заполненные данные в базе? Введите yes или no.");
+			if (choise1 == "yes") {
+				check=add_client_code_into_dogovor();
+				if (check) {
+					system("cls");
+					std::cout << "Информации об этом пользователе не было и вы добавили его идентификационный номер в базу." << std::endl;
+					Sleep(2500);
+					add_user_information();
+				}
+				else {
+					system("cls");
+					std::cout << "Данные клиента уже есть в базе." << std::endl;
+					Sleep(2500);
+					add_dogovor();
+				}
+			}
+			else {
+				check = add_client_code_into_dogovor();
+				if (check) {
+					system("cls");
+					std::cout << "Информации об этом пользователе не было и вы добавили его идентификационный номер в базу." << std::endl;
+					Sleep(2500);
+					add_user_information();
+				}
+				else {
+					system("cls");
+					std::cout << "Данные клиента уже есть в базе." << std::endl;
+					Sleep(2500);
+					add_dogovor();
+				}
 
-			//add_user_information(admins);
+			}
+			
+			
 
 			break;
 			
@@ -142,51 +182,144 @@ void Admin::adminMenu(std::vector <logpass>& admins) {
 		}
 	}
 }
-void Admin::add_user_information(std::vector <logpass>& admins) {
+bool Admin::add_client_code_into_dogovor() {
+	system("cls");
+	int u = 0;
+	bool next;
 	bool neban = true;
-    std::vector<information>userss;
-	data_client_file(userss);
+	information user;
 	std::vector<information> passport;
 	data_passport_file(passport);
-	getchar();
 	do {
-		this->user.client_code = client_code("Введите код клиента.Введите exit, если хотите вернуться в главное меню.");
+		user.client_code = client_code("Введите код клиента.");
 		neban = true;
-		information check(user.client_code);
-		if (std::find(passport.begin(), passport.end(), check) != passport.end()) {
-			std::cout << "Такой индентификационный номер уже существует." << std::endl;
-			neban = false;
-		};
-		if (this->user.client_code == "exit") {
-			adminMenu(admins);
-			break;
+		auto j = passport[0];
+		for (auto i : passport) {
+			if (i.client_code == user.client_code) {
+				u++;
+				system("cls");
+				std::ofstream file2("dogovor.txt", std::ios::app);
+				file2 << i.client_code << std::endl;
+				file2.close();
+				std::ofstream file3("magic.txt", std::ios::app);
+				file3 << i.client_code << std::endl << i.name << std::endl << i.surname << std::endl;
+				file3.close();
+				neban = true;
+				next = false;
+			}
+			else j = i;
+
 		}
+		
+		if(u==0){
+		std::ofstream file("passport.txt", std::ios::app);
+		file  << user.client_code<< std::endl;
+		file.close();
+		std::ofstream file1("dogovor.txt", std::ios::app);
+		file1 << user.client_code << std::endl;;
+		file1.close();
+		next = true;
+	}
+
+		
 	} while (!neban);
 	
-	this->user.telephone_number = telephone_number("Введите номер телефона клиента.Введите exit, если хотите вернуться в главное меню.");
-	if (this->user.telephone_number == "exit") {
-		adminMenu(admins);
+	return next;
 	}
-	this->user.country = ccs("Введите страну проживания.Введите exit, если хотите вернуться в главное меню");
-	if (this->user.country == "exit") {
-		adminMenu(admins);
-	}
-	this->user.city = ccs("Введите город проживания.Введите exit, если хотите вернуться в главное меню");
-	if (this->user.city == "exit")
-	this->user.street = ccs("Введите улицу проживания.Введите exit, если хотите вернуться в главное меню");
-	if (this->user.street == "exit") {
-		adminMenu(admins);
-	}
-	this->user.housenumber = hf("Введите номер дома.Введите exit, если хотите вернуться в главное меню");
-	if (this->user.housenumber == "exit") {
-		adminMenu(admins);
-	}
-	this->user.flatnumber = hf("Введите номер квартиры. Введите 0, если клиент проживает в частном доме.Введите exit, если хотите вернуться в главное меню");
-	if (this->user.flatnumber == "exit") {
-		adminMenu(admins);
-	}
+void Admin::add_user_information(){
+		std::cout << "Добавить инфу о пользователе" << std::endl;
+	/*this->user.telephone_number = telephone_number("Введите номер телефона клиента.");
+	
+	this->user.country = ccs("Введите страну проживания");
+	
+	this->user.city = ccs("Введите город проживания.");
+	
+	this->user.street = ccs("Введите улицу проживания.");
+	
+	this->user.housenumber = hf("Введите номер дома.");
+	
+	this->user.flatnumber = hf("Введите номер квартиры. Введите 0, если клиент проживает в частном доме.");
+	*/
 	
 }
 void Admin::addlogpass() {
-	std::cout << "Добавить пользователя" << std::endl;
+	system("cls");
+	logpass human;
+	bool access = true;
+	bool exit = false;
+	do {
+		if (access) {
+			human.login = login(1, access, exit);
+		}
+		else {
+			human.login = login(3, access, exit);
+		}
+		if (exit) break;
+		human.password = password(exit);
+		std::ifstream file("users.txt");
+		while (file)
+		{
+			std::string tmp;
+			getline(file, tmp);
+			if (tmp == human.login)
+			{
+				access = false;
+				break;
+			}
+			else {
+				access = true;
+			}
+			getline(file, tmp);
+		}
+		file.close();
+		if (exit) break;
+	} while (!access);
+	 
+	if (exit) {
+		adminMenu();
+	}
+	if (!exit)
+	{
+		std::ofstream file1("users.txt", std::ios::app);
+		file1  << human.login << std::endl << human.password << std::endl;
+		file1.close();
+		system("cls");
+		std::cout << "Вы добавили пользователя в базу." << std::endl;
+	}
+}
+bool Admin::check_login_once() {
+	system("cls");
+	bool check = true;
+	bool access = true;
+	bool exit = false;
+	do {
+		if (access) {
+			this->human.login = login(1, access, exit);
+		}
+		if (exit) break;
+		access = true;
+		std::vector<logpass> users;
+		data_user_file(users);
+		for (auto i : users)
+		{
+			if (i.login == this->human.login)
+			{
+				system("cls");
+				std::cout << "Пользователь с таким логином действительно есть." << std::endl;
+				check = true;
+				access = true;
+				break;
+			}
+			else {
+				check = false;
+			}
+		}
+	} while (!access);
+	if (exit) {
+		adminMenu();
+	}
+	return check;
+}
+void Admin::add_dogovor() {
+	std::cout << "Add dogovor" << std::endl;
 }

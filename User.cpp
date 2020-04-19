@@ -1,7 +1,5 @@
 #include"Header.h"
-int user_login(std::vector <logpass>& users) {
-	return 0;
-}
+
 void User_haveAccount(std::vector<logpass>&users) {
 	int a;
 	bool run = true;
@@ -38,23 +36,25 @@ void User_haveAccount(std::vector<logpass>&users) {
 void data_user_file(std::vector<logpass>& users) 
 	{
 		std::ifstream file("users.txt");
-		while (file)
+		while (!file.eof())
 		{
 			logpass temp;
 			getline(file, temp.login);
 			getline(file, temp.password);
 			users.push_back(temp);
 		}
-		if (!users.empty()) users.erase(users.end() - 1);
+		
 		file.close();
 
 	}
 void data_passport_file(std::vector<information>&passport) {
 	std::ifstream file("passport.txt");
-	while (file)
+	while (!file.eof())
 	{
 		information temp;
 		std::getline(file, temp.client_code);
+		std::getline(file, temp.name);
+		std::getline(file, temp.surname);
 		passport.push_back(temp);
 	}
 	if (!passport.empty()) passport.erase(passport.end() - 1);
@@ -89,45 +89,11 @@ void Client::enterAccount(std::vector<logpass>& users) {
 		menu();
 	};
 	if (access) {
-		Sleep(3000);
 		userMenu(users);
 	}
 
 
 };
-bool Client::check_login_once() {
-	bool check=true;
-    bool access = true;
-	bool exit = false;
-	do {
-		if (access) {
-			this->human.login = login(1, access, exit);
-		}
-		if (exit) break;
-		access = true;
-		std::vector<logpass> users;
-		data_user_file(users);
-		for (auto i : users)
-		{
-			if (i.login == this->human.login)
-			{
-				this->human.password = i.password;
-				std::cout << "Пользователь с таким логином действительно есть." << std::endl;
-				std::ofstream file("vse.txt", std::ios::app);
-				file << this->human.login << std::endl << this->human.password << std::endl;
-				file.close();
-				check = true;
-				access = true;
-				break;
-			}
-			else {
-				check = false;
-			}
-		}
-	} while (!access);
-	return check;
-}
-
 std::string login(int type, bool& access, bool& exit) {
 	bool run = true;
 	int u=0;
@@ -148,7 +114,7 @@ std::string login(int type, bool& access, bool& exit) {
 		break;
 	case 3:
 		system("cls");
-		login = getString("Такой логин уже существует. Для выхода введите menu.");
+		login = getString("Такой логин уже существует. Введите логин еще раз или для выхода введите menu.");
 		break;
 	};
 	
@@ -186,7 +152,6 @@ std::string login(int type, bool& access, bool& exit) {
 	} while (true);
 	return login;
 };
-
 std::string password(bool& exit) {
 	int u = 0;
 	std::string password;
@@ -198,9 +163,10 @@ std::string password(bool& exit) {
 			exit = true;
 			break;
 		}
-		if (password.size() <= 8 && password.size() >= 12)
+		if (password.size() < 8 || password.size() > 12)
 		{
 			password = getString("Пароль должен содержать  от 8 до 12 символов. Для выхода введите menu.");
+			continue;
 		}
 
 		for (auto a : password) {
@@ -220,23 +186,20 @@ std::string password(bool& exit) {
 	} while (true);
 	return password;
 };
-
 void Client::userMenu(std::vector<logpass>& users) {
 	system("cls");
 	std::cout << "user menu" << std::endl;
 }
 void data_client_file(std::vector<information>& userss) {
 	std::ifstream file("data.txt");
-	while (file) {
+	while (!file.eof()) {
 		information temp;
-		getline(file, temp.client_code);
 		getline(file, temp.telephone_number);
 		getline(file, temp.country);
 		getline(file, temp.city);
 		getline(file, temp.street);
 		getline(file, temp.housenumber);
 		getline(file, temp.flatnumber);
-		if(!userss.empty()) userss.erase(userss.end() - 1);
 		file.close();
 	}
 }

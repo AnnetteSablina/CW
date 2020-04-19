@@ -12,7 +12,6 @@ class information;
 class client;
 class data;
 class dogovor;
-int user_login(std::vector <logpass>&);
 void User_haveAccount(std::vector<logpass>&);//вопрос о имении аккаунта
 void Admin_haveAccount(std::vector<logpass>&);//вопрос о персонализации личности
 int getInt(std::string);// получение целого
@@ -25,10 +24,15 @@ void data_client_file(std::vector<information>&);//получение инфы о клиенте из ф
 void rewrite_user_file(std::vector<logpass>&);
 void data_passport_file(std::vector<information>&);//получение идентификационного номера из файла
 std::string yes_no(std::string);//получение ответа да/нет
-std::string login(int, bool&, bool&);
-std::string password(bool&);
-
-
+std::string login(int, bool&, bool&);//проверка на ввод логина
+std::string password(bool&);//проверка на ввод пароля
+void user_file(std::vector<std::string>&, std::vector<std::string>&);//основа для самого частого пользователя
+void trololo();//основа для самого частого пользователя
+std::string ns(std::string);//проверка на ввод имени и фамилии
+std::string client_code(std::string);//проверка на ввод кода клиента
+std::string telephone_number(std::string);//проверка на телефонный номер
+std::string ccs(std::string);// проверка на ввод страны, города и улицы
+std::string hf(std::string);// проверка на номер дома и квартиры
 
 
 
@@ -40,43 +44,46 @@ std::string password(bool&);
 
 class logpass {
 public:
-	logpass(std::string, std::string);
+	logpass(std::string, std::string);// конструктор логин + пароль
 	std::string password;//пароль
 	std::string login;//логин
-	bool operator==(logpass human);
-	logpass();
+	bool operator==(logpass human);// перегрузка оператора ==
+	logpass();// конструктор по умолчанию
+	
 
 };
 class information {
 public:
-	information(std::string, std::string, std::string, std::string, std::string, std::string, std::string);
-	std::string client_code;
-	std::string telephone_number;
-	std::string country;
-	std::string city;
-	std::string street;
-	std::string housenumber;
-	std::string flatnumber;
-	information();
-	information(std::string);
-	bool operator==(information user);
+	information(std::string, std::string, std::string, std::string,std::string,std::string);// конструктор для всех полей кроме кода клиента
+	std::string client_code;// код клиента/номер паспорта
+	std::string name;//Имя
+	std::string surname;//Фамилия
+	std::string telephone_number;//Номер телефона
+	std::string country;//Страна
+	std::string city;//Город
+	std::string street;//Улица
+	std::string housenumber;//Номер дома
+	std::string flatnumber;//Номер квартиры
+	information();//Конструктор по умолчанию
+	information(std::string, std::string, std::string);//конструктор для номера паспорта,имени и фамилии
+	bool operator==(information user);//перегрузка оператора ==
 };
 
 class dogovor {
 public:
-	std::string name;
-	std::string document_code;
-	std::string service_code;
-	std::string summ;
-	std::string commition;
+	std::string name;//Название договора
+	std::string document_code;//Код договора
+	std::string service_code;// Код услуги
+	std::string summ;//Сумма
+	std::string commition;//Коммисионные
 };
 class data {
 public:
-	data(std::string);
-	data();
-	std::string day;
-	std::string month;
-	std::string year;
+	data(std::string);//конструктор даты
+	data();//конструктор по умолчанию
+	std::string day;//день
+	std::string month;//месяц
+	std::string year;//год
 };
 class Client {
 public:
@@ -84,17 +91,14 @@ public:
 	information user;
 	data data;
 	dogovor dogovor;
-	Client();
+	Client();//конструктор по умолчанию
 	Client(std::string);
 	virtual void enterAccount(std::vector<logpass>&);
-	std::string client_code(std::string);//проверка на ввод кода клиента
-	std::string telephone_number(std::string);//проверка на телефонный номер
-	std::string ccs(std::string);// проверка на ввод страны, города и улицы
-	std::string hf(std::string);// проверка на номер дома и квартиры
 	void userMenu(std::vector<logpass>&);// меню пользователя
-    void changePassword(std::vector<logpass>&);//сменить пароль
+    void changelogpass(std::vector<logpass>&);//сменить пароль и логин
 	int checkPasswords();//проверка на пароли
-	bool check_login_once();//проверка на единственность логина
+	
+	
 
 
 };
@@ -104,8 +108,10 @@ class Admin :public Client
 	void CreateAccount(std::vector<logpass>&);//создание аккаунта
 	void deleteAccount(std::vector<logpass>&);//удаление аккаунта
 	void addlogpass();//добавить пользователя(логин и пароль)
-	void adminMenu(std::vector <logpass>&);//меню админа
-	void add_user_information(std::vector <logpass>&);//добавить информацию о пользователе
-	
-
+	void adminMenu();//меню админа
+	void add_user_information();//добавить информацию о пользователе
+	void changeinfo();
+	bool add_client_code_into_dogovor();// проверить код клиента и добавить его в файл с договором
+	void add_dogovor();//добавить договор
+	bool check_login_once();//Для проверки есть ли такой пользователь в базе
 };
